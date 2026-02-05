@@ -15,7 +15,7 @@ COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-install-project --no-dev
 
 # --- ETAPA 2: Runner ---
-FROM python:3.13-slim
+FROM python:3.14-slim
 
 WORKDIR /app
 
