@@ -48,16 +48,16 @@ def ingestao():
         logger.info("Navegador fechado.")
 
 
-ingestao()
-# @app.post("/executar")
-# def trigger_robo():
-#     if threading.active_count() > 5:
-#         return {"message": "Já existem 5 ingestões em andamento. Aguarde as ingestões anteriores terminarem."}
-    
-#     t = threading.Thread(target=ingestao)
-#     t.start()
-#     return {"status": "iniciado", "message": "Robô rodando em background"}
 
-# @app.get("/")
-# def health():
-#     return {"status": "online", "service": "Ingestão Relatório 455"}
+@app.post("/executar")
+def trigger_robo():
+    if threading.active_count() > 5:
+        return {"message": "Já existem 5 ingestões em andamento. Aguarde as ingestões anteriores terminarem."}
+    
+    t = threading.Thread(target=ingestao)
+    t.start()
+    return {"status": "iniciado", "message": "Robô rodando em background"}
+
+@app.get("/")
+def health():
+    return {"status": "online", "service": "Ingestão Relatório 455"}
