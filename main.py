@@ -21,7 +21,7 @@ def ingestao():
 
     try:
         logger.info("Abrindo navegador...")
-        driver_chr = driver(headless=True)
+        driver_chr = driver()
 
         logger.info("Fazendo login...")
         make_login(driver_chr)
