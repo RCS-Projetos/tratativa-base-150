@@ -47,8 +47,6 @@ def ingestao():
         
         logger.info("Navegador fechado.")
 
-
-
 @app.post("/executar")
 def trigger_robo():
     if threading.active_count() > 5:

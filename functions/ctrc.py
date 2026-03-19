@@ -53,7 +53,8 @@ def new_ctrcs(df: DataFrame) -> DataFrame:
 
 def old_ctrcs(df: DataFrame) -> DataFrame:
     df_registered = df[df['id'].notna()].copy()
-
+    
+    # Função auxiliar para extrair texto de dicionários se necessário
     def extract_text(val):
         if isinstance(val, dict):
             return str(val.get('name') or val.get('description') or val.get('code') or '')
@@ -68,14 +69,24 @@ def old_ctrcs(df: DataFrame) -> DataFrame:
     
     # Normalização de datas para YYYY-MM-DD
     def normalize_date(series):
-        return pd.to_datetime(series, dayfirst=True, errors='coerce').dt.strftime('%Y-%m-%d').fillna('')
-    
+        # 1. Tenta ler no formato exato do banco de dados (YYYY-MM-DD)
+        s_banco = pd.to_datetime(series, format='%Y-%m-%d', errors='coerce')
+        
+        # 2. Tenta ler no formato da planilha (DD/MM/YYYY) com dayfirst=True
+        s_planilha = pd.to_datetime(series, dayfirst=True, errors='coerce')
+        
+        # 3. Combina os dois: se falhou no formato do banco (ficou NaT), usa o da planilha
+        s_final = s_banco.fillna(s_planilha)
+        
+        # 4. Converte tudo para string padronizada
+        return s_final.dt.strftime('%Y-%m-%d').fillna('')
+
     mask = (
         (normalize(df_registered['Current location description']) != normalize(df_registered['current_location'])) | 
         (normalize_date(df_registered['Delivery due']) != normalize_date(df_registered['delivery_due'])) |
         (normalize(df_registered['Receiving unit']) != normalize(df_registered['receiving_unit']))
     )
-
+    
     df_registered_to_update = df_registered[mask]
     return df_registered_to_update
 
